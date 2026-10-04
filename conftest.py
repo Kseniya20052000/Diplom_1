@@ -15,8 +15,8 @@ def black_bun():
 
 @pytest.fixture
 def hot_sauce():
-    return Ingredient(INGREDIENT_TYPE_SAUCE, "hot sauce", 50)
+    return Ingredient(INGREDIENT_TYPE_SAUCE, "hot sauce", 100)
 
 @pytest.fixture
 def cutlet():
-    return Ingredient(INGREDIENT_TYPE_FILLING, "cutlet", 80)
+    return Ingredient(INGREDIENT_TYPE_FILLING, "cutlet", 100)
