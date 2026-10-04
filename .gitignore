@@ -1,0 +1,19 @@
+# Виртуальное окружение 
+.venv/
+venv/
+env/
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Файлы IDE (VS Code)
+.vscode/
+*.code-workspace
+
+# Артефакты отчётов
+allure-results/
+html-report/
+reports/
