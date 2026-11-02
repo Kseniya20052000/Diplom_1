@@ -75,11 +75,28 @@ def test_receipt_contains_filling_line(burger, black_bun, hot_sauce, cutlet):
         assert "= filling cutlet =" in receipt.lower()
 
 
-@allure.title("В чеке указана итоговая цена")
-def test_receipt_contains_price(burger, black_bun, hot_sauce, cutlet):
+@allure.title("Чек формируется полностью и точно соответствует ожидаемому формату")
+def test_receipt_full_match(burger, black_bun, hot_sauce, cutlet):
     burger.set_buns(black_bun)
     burger.add_ingredient(hot_sauce)
     burger.add_ingredient(cutlet)
+
+    expected_price = (black_bun.get_price() * 2) + hot_sauce.get_price() + cutlet.get_price()
+
+    
+    expected_receipt = (
+        f"(==== {black_bun.get_name()} ====)\n"
+        f"= {hot_sauce.get_type().lower()} {hot_sauce.get_name()} =\n"
+        f"= {cutlet.get_type().lower()} {cutlet.get_name()} =\n"
+        f"(==== {black_bun.get_name()} ====)\n\n" 
+        f"Price: {expected_price}"
+    )
+
     receipt = burger.get_receipt()
-    with allure.step("Проверяем, что в чеке указана цена"):
-        assert f"Price: {burger.get_price()}" in receipt
+
+    with allure.step("Сравниваем чек целиком (строка в строку)"):
+        assert receipt == expected_receipt, (
+            f"Чек не совпадает с ожидаемым.\n"
+            f"Ожидалось:\n{expected_receipt}\n"
+            f"Получено:\n{receipt}"
+        )
