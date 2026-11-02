@@ -1,60 +1,68 @@
+import pytest
 import allure
 from praktikum.bun import Bun
 
 
-@allure.title("Проверка имени булочки после инициализации")
-def test_bun_name_after_init():
-    bun = Bun("black bun", 100.5)
-    with allure.step("Создаём булочку и проверяем имя"):
-        assert bun.get_name() == "black bun"
+@allure.title("Проверка имени и цены булочек после инициализации (параметризованный тест)")
+@pytest.mark.parametrize(
+    "name, price",
+    [
+        ("black bun", 100.5),
+        ("white bun", 200),
+        ("red bun", 300),
+    ],
+)
+def test_bun_name_and_price_after_init(name, price):
+    bun = Bun(name, price)
+    with allure.step(f"Создаём булочку '{name}' с ценой {price} и проверяем имя и цену"):
+        assert bun.get_name() == name
+        assert bun.get_price() == price
 
 
-@allure.title("Проверка цены булочки после инициализации")
-def test_bun_price_after_init():
-    bun = Bun("black bun", 100.5)
-    with allure.step("Создаём булочку и проверяем цену"):
-        assert bun.get_price() == 100.5
+@allure.title("Разные экземпляры булочек хранят свои данные (проверка изоляции состояний)")
+@pytest.mark.parametrize(
+    "buns_data",
+    [
+        
+        [("white bun", 200), ("red bun", 300)],
+        [("black bun", 100.5), ("white bun", 200)],
+    ],
+)
+def test_bun_instances_keep_own_data(buns_data):
+    buns = [Bun(name, price) for name, price in buns_data]
+
+    for i, (name, price) in enumerate(buns_data, start=1):
+        with allure.step(f"Проверяем, что экземпляр {i} хранит свои данные"):
+            assert buns[i - 1].get_name() == name
+            assert buns[i - 1].get_price() == price
 
 
-@allure.title("Разные экземпляры булочек хранят свои данные (проверка имени первой булочки)")
-def test_bun_instances_keep_own_name_first():
-    bun1 = Bun("white bun", 200)
-    with allure.step("Проверяем имя первой булочки"):
-        assert bun1.get_name() == "white bun"
-
-
-@allure.title("Разные экземпляры булочек хранят свои данные (проверка цены первой булочки)")
-def test_bun_instances_keep_own_price_first():
-    bun1 = Bun("white bun", 200)
-    with allure.step("Проверяем цену первой булочки"):
-        assert bun1.get_price() == 200
-
-
-@allure.title("Разные экземпляры булочек хранят свои данные (проверка имени второй булочки)")
-def test_bun_instances_keep_own_name_second():
-    bun2 = Bun("red bun", 300)
-    with allure.step("Проверяем имя второй булочки"):
-        assert bun2.get_name() == "red bun"
-
-
-@allure.title("Разные экземпляры булочек хранят свои данные (проверка цены второй булочки)")
-def test_bun_instances_keep_own_price_second():
-    bun2 = Bun("red bun", 300)
-    with allure.step("Проверяем цену второй булочки"):
-        assert bun2.get_price() == 300
-
-
-@allure.title("get_name возвращает строку")
-def test_bun_get_name_returns_str():
-    bun = Bun("test bun", 99.9)
-    name = bun.get_name()
-    with allure.step("Проверяем тип возвращаемого значения get_name"):
-        assert isinstance(name, str)
+@allure.title("get_name возвращает строку (параметризованный тест с разными именами)")
+@pytest.mark.parametrize(
+    "name, price",
+    [
+        ("test bun", 99.9),
+        ("", 0),
+        ("very long bun name", 123.45),
+    ],
+)
+def test_bun_get_name_returns_str(name, price):
+    bun = Bun(name, price)
+    result = bun.get_name()
+    with allure.step("Проверяем, что get_name возвращает строку"):
+        assert isinstance(result, str)
 
 
 @allure.title("get_price возвращает число (int или float)")
-def test_bun_get_price_returns_number():
-    bun = Bun("test bun", 99.9)
-    price = bun.get_price()
-    with allure.step("Проверяем тип возвращаемого значения get_price"):
-        assert isinstance(price, (int, float))
+@pytest.mark.parametrize(
+    "name, price",
+    [
+        ("int price bun", 100),
+        ("float price bun", 99.9),
+    ],
+)
+def test_bun_get_price_returns_number(name, price):
+    bun = Bun(name, price)
+    result = bun.get_price()
+    with allure.step("Проверяем, что get_price возвращает int или float"):
+        assert isinstance(result, (int, float))
