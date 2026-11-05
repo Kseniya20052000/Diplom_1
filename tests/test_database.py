@@ -63,48 +63,25 @@ def test_database_methods_return_list(method_name):
 
 
 
-@allure.title("Database корректно обрабатывает моки булочек (проверка изоляции логики)")
-def test_database_works_with_mock_buns():
+
+@allure.title("Database возвращает подменённый список булочек из моков")
+def test_database_returns_mocked_buns():
     db = Database()
+    mock_bun = MagicMock(spec=["get_name", "get_price"])
+    mock_bun.get_name.return_value = "mock bun"
+    mock_bun.get_price.return_value = 100
+    db.buns = [mock_bun]
 
-    
-    mock_bun_1 = MagicMock(spec=['get_name', 'get_price'])
-    mock_bun_1.get_name.return_value = "mock bun 1"
-    mock_bun_1.get_price.return_value = 100
-
-    mock_bun_2 = MagicMock(spec=['get_name', 'get_price'])
-    mock_bun_2.get_name.return_value = "mock bun 2"
-    mock_bun_2.get_price.return_value = 200
-
-    db.buns = [mock_bun_1, mock_bun_2]
-
-    result = db.available_buns()
-
-    with allure.step("Проверяем, что метод возвращает подменённый список моков"):
-        assert len(result) == 2
-        assert result[0] is mock_bun_1
-        assert result[1] is mock_bun_2
+    assert db.available_buns() == [mock_bun]
 
 
-@allure.title("Database корректно обрабатывает моки ингредиентов (проверка изоляции логики)")
-def test_database_works_with_mock_ingredients():
+@allure.title("Database возвращает подменённый список ингредиентов из моков")
+def test_database_returns_mocked_ingredients():
     db = Database()
+    mock_ing = MagicMock(spec=["get_type", "get_name", "get_price"])
+    mock_ing.get_type.return_value = "sauce"
+    mock_ing.get_name.return_value = "mock sauce"
+    mock_ing.get_price.return_value = 50
+    db.ingredients = [mock_ing]
 
-    mock_ing_1 = MagicMock(spec=['get_type', 'get_name', 'get_price'])
-    mock_ing_1.get_type.return_value = "sauce"
-    mock_ing_1.get_name.return_value = "mock sauce"
-    mock_ing_1.get_price.return_value = 50
-
-    mock_ing_2 = MagicMock(spec=['get_type', 'get_name', 'get_price'])
-    mock_ing_2.get_type.return_value = "filling"
-    mock_ing_2.get_name.return_value = "mock filling"
-    mock_ing_2.get_price.return_value = 70
-
-    db.ingredients = [mock_ing_1, mock_ing_2]
-
-    result = db.available_ingredients()
-
-    with allure.step("Проверяем, что метод возвращает подменённый список моков"):
-        assert len(result) == 2
-        assert result[0] is mock_ing_1
-        assert result[1] is mock_ing_2
+    assert db.available_ingredients() == [mock_ing]
