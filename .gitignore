@@ -9,6 +9,8 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+.coverage
+htmlcov/
 
 # Файлы IDE (VS Code)
 .vscode/
